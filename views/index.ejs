@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/index.css">
+    <title>
+        <% if(!error){ %>
+           <%= channel %> Channel
+         <% } else{ 
+            __append(error)
+        } %>
+        
+            
+    </title>
+</head>
+<body id="particles-js">
+    <div class='console'>
+        <div class="header">
+            <h1 class="text-center" style="margin-bottom: 0;">WELCOME TO PANEL</h1>
+            <% if(!error){ %>
+               <h2 class="text-center" style="margin-top: 0;">CHANNEL #<%= channel %></h2>
+            <% } %>
+        </div>
+        <div class='console-inner'>
+            <% if(error){ %>
+               <h1 class="text-center error-title"> <%= error %> </h1>
+               <p class="text-center uppercase">Click <a class="here" href="/">here</a> to go to the main channel</p>
+            <% } %>
+            <% if(isOpen){ %>
+               <h1 class="text-center error-title uppercase"> this channel is already opened </h1>
+               <p class="text-center uppercase">Click <a class="here" onclick="window.close()">here</a> to close this window</p>
+            <% } %>
+            <div id="outputs">
+            </div>
+        </div>
+        <div class="control">
+            <form class="form" target="_blank">
+                <input type="text" name="channel" id="channel-input">
+                <button type="submit" style="display: none;"></button>
+                <button class="button-63" role="button" id="submit-button">+</button>
+            </form>
+        </div>
+    </div>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/assets/modules/autosize.min.js"></script>
+<script src="/assets/modules/particles.js"></script>
+<script>
+    var socket = io();
+    const channel = '<%= channel %>'
+    const error = '<%= error %>'
+    const filter = <%- JSON.stringify(filter) %>
+    const isOpen = <%= isOpen %>
+
+    if(!error && !isOpen)
+        socket.emit("channel", channel)
+    socket.on('msg', (msg) => {
+        output(getCurrentDateTime() + " > " + msg)
+    })
+</script>
+<script src="/assets/index.js"></script>
+</html>
